@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light justify-content-between px-4">
+        <span class="navbar-brand mb-0 h1">Restaurant Dashboard</span>
+        <form class="d-flex" action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button class="btn btn-outline-danger" type="submit">Logout</button>
+        </form>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Welcome, {{ restaurant.name }}</h2>
+        <p>Here are your recent orders:</p>
+
+        {% if order_items %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Menu Item</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                        <tr>
+                            <td>#{{ item.order.id }}</td>
+                            <td>{{ item.order.user.username }}</td>
+                            <td>{{ item.menu_item.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.order.status }}</td>
+                            <td>
+                                <form action="{% url 'update_order_status' item.order.id %}" method="POST">
+                                    {% csrf_token %}
+                                    <select name="status" class="form-select form-select-sm d-inline w-auto">
+                                        {% for key, value in item.order.ORDER_STATUS_CHOICES %}
+                                            <option value="{{ key }}" {% if key == item.order.status %}selected{% endif %}>
+                                                {{ value }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No orders yet.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

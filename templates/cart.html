@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Your Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .cart-title {
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .item-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2 class="cart-title">Your Cart</h2>
+
+    <!-- Messages -->
+    {% if messages %}
+      <div class="mb-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if items %}
+        <table class="table table-bordered bg-white shadow-sm">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Type</th>
+                    <th>Price (per unit)</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td class="d-flex align-items-center">
+                        {% if item.item_type == 'food' and item.menu_item.image %}
+                            <img src="{{ item.menu_item.image.url }}" alt="{{ item.menu_item.name }}" class="item-img me-3" />
+                            {{ item.menu_item.name }}
+                        {% elif item.item_type == 'grocery' and item.grocery_item.image %}
+                            <img src="{{ item.grocery_item.image.url }}" alt="{{ item.grocery_item.name }}" class="item-img me-3" />
+                            {{ item.grocery_item.name }}
+                        {% else %}
+                            No Image - {{ item.menu_item.name|default:item.grocery_item.name }}
+                        {% endif %}
+                    </td>
+                    <td>{{ item.get_item_type_display }}</td>
+                    <td>
+                        Rs.
+                        {% if item.item_type == 'food' %}
+                            {{ item.menu_item.price }}
+                        {% else %}
+                            {{ item.grocery_item.price }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{% url 'update_cart_item_quantity' item.id %}" class="d-flex align-items-center">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control me-2" style="width: 80px;" />
+                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                        </form>
+                    </td>
+                    <td>Rs. {{ item.total_price }}</td>
+                    <td>
+                        <a href="{% url 'remove_cart_item' item.id %}" class="btn btn-danger btn-sm">Remove</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-end">Total:</th>
+                    <th colspan="2" class="text-danger fw-bold">
+                        Rs. {{ cart.total_price }}
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Updated checkout button URL -->
+        <a href="{% url 'checkout' %}" class="btn btn-success">Proceed to Checkout</a>
+
+    {% else %}
+        <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

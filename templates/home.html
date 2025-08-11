@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Foodpanda - Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f5f5f5;
+    }
+    .hero-section {
+      background-image: url('https://i.pinimg.com/originals/33/ef/8b/33ef8b9c0b902154a6cd4103a21275ef.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      border-radius: 8px;
+      text-align: center;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+    .hero-section h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: rgb(3, 3, 3);
+    padding: 10px 20px;
+    border-radius: 10px;
+  }
+    .btn-pink {
+      background-color: #e21b70;
+      color: white;
+    }
+    .btn-outline-black {
+      background-color: white;
+      color: black;
+      border: 1px solid black;
+    }
+    .blur-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .signup-form {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    .profile-img {
+      width: 35px;
+      height: 35px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    
+  .profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .blur-overlay.active {
+    display: flex !important;
+  }
+  .signup-form {
+    position: relative;
+  }
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+  }
+  .blur-overlay {
+  transition: all 0.3s ease-in-out;
+}
+
+
+
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <!-- Logo -->
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple112/v4/a4/9c/a4/a49ca487-bb14-40ed-06ea-86ff59ad40ee/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/1200x630wa.png/1200x630wa.png" alt="Logo" height="40">
+      <span class="ms-2 fw-bold text-danger" style="font-size: 1.5rem;">foodpanda</span>
+    </a>
+
+    <div class="d-flex align-items-center ms-auto">
+      {% if user.is_authenticated %}
+        {% if user.profile_image %}
+          <img src="{{ user.profile_image.url }}" class="profile-img me-2" alt="Profile Image">
+        {% endif %}
+        <span class="fw-bold me-2">{{ user.username }}</span>
+
+        {% if user.user_type == 'customer' %}
+          <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        {% endif %}
+      {% else %}
+        <a class="nav-link" href="{% url 'login' %}">Log in</a>
+        <button class="btn btn-pink ms-2" onclick="openSignup()">Sign up for free delivery</button>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<!-- Offcanvas Sidebar for Customers -->
+<!-- Offcanvas Sidebar for Customers -->
+{% if user.is_authenticated and user.user_type == 'customer' %}
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <a class="nav-link" href="{% url 'customer_orders' %}">My Orders</a>
+      </li>
+      <li class="list-group-item">
+        <a class="nav-link" href="{% url 'review_create' %}">Submit Review</a>
+      </li>
+      <li class="list-group-item">
+        <a class="nav-link" href="{% url 'helpticket_create' %}">Help & Support</a>
+      </li>
+      <li class="list-group-item">
+        <a class="nav-link text-danger" href="{% url 'logout' %}">Logout</a>
+      </li>
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+
+
+<!-- Hero Section -->
+<!-- Hero Section -->
+<div class="container mt-4">
+  <div class="hero-section">
+    <h1 class="mb-3">Sign up for free delivery on your first order</h1>
+    <div class="row justify-content-center g-2">
+      <div class="col-auto">
+        <input type="text" id="addressInput" class="form-control" placeholder="Enter your address">
+      </div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-secondary" onclick="locateMe()">Locate me</button>
+      </div>
+      <div class="col-auto">
+        <a href="{% url 'restaurant_list' %}" class="btn btn-pink">Find food</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Signup Overlay -->
+<!-- Signup Overlay -->
+<div id="signupOverlay" class="blur-overlay" onclick="closeSignup(event)">
+  <div class="signup-form" onclick="event.stopPropagation();">
+    <button class="close-btn" onclick="closeSignup()">×</button>
+    <h3 class="text-center mb-4">Sign Up</h3>
+    <form method="POST" enctype="multipart/form-data" action="{% url 'signup' %}">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger small mt-1">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-pink w-100">Sign Up</button>
+        <div class="mt-3 text-center">
+            <p class="text-muted">Already have an account? 
+                <a href="{% url 'login' %}" class="fw-bold text-pink text-decoration-none">Login</a>
+            </p>
+        </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- JS -->
+<script>
+function locateMe() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.display_name;
+                    document.getElementById('addressInput').value = address;
+                    // Store in localStorage
+                    localStorage.setItem('userAddress', address);
+                });
+        }, function(error) {
+            alert("Location access denied or unavailable.");
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function openSignup() {
+    document.getElementById("signupOverlay").classList.add("active");
+  }
+
+  function closeSignup(event) {
+    if (!event || event.target.id === "signupOverlay") {
+      document.getElementById("signupOverlay").classList.remove("active");
+    }
+  }
+
+  // Optional: Close with ESC key
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+      closeSignup();
+    }
+  });
+</script>
+
+
+</body>
+</html>

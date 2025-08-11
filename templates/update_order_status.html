@@ -1,0 +1,9 @@
+<form method="post">
+    {% csrf_token %}
+    <select name="status">
+        {% for key, value in statuses %}
+            <option value="{{ key }}">{{ value }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Update</button>
+</form>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Order Item</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">Add Item to Order</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="mb-3">
+            <label for="id_menu_item" class="form-label">Menu Item (optional)</label>
+            {{ form.menu_item|as_widget:attrs }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_grocery_item" class="form-label">Grocery Item (optional)</label>
+            {{ form.grocery_item|as_widget:attrs }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_quantity" class="form-label">Quantity</label>
+            {{ form.quantity }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_price" class="form-label">Price</label>
+            {{ form.price }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Item</button>
+        <a href="{% url 'order_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

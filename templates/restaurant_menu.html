@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ restaurant.user.username }}'s Menu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .menu-title {
+            font-weight: 700;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            text-align: center;
+            color: #343a40;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #ddd;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.25rem;
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #212529;
+        }
+        .card-text {
+            flex-grow: 1;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            min-height: 60px;
+        }
+        .price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #dc3545;
+            margin-bottom: 1rem;
+        }
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-size: 1rem;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .no-items {
+            text-align: center;
+            font-size: 1.25rem;
+            color: #6c757d;
+            margin-top: 4rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="menu-title">{{ restaurant.user.username }}'s Menu</h2>
+
+    <div class="row g-4">
+        {% for item in menu_items %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="No Image">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ item.name }}</h5>
+                        <p class="card-text">{{ item.description|truncatechars:100 }}</p>
+                        <p class="price">Rs.{{ item.price }}</p>
+                        <a href="{% url 'add_to_cart' 'food' item.id %}" class="btn btn-primary mt-auto" data-bs-toggle="tooltip" title="Add {{ item.name }} to your cart">
+                            <i class="bi bi-cart-plus-fill"></i> Add to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="no-items w-100">
+                No menu items available.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Enable Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', () => {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.forEach(tooltipTriggerEl => {
+            new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
+
+</body>
+</html>

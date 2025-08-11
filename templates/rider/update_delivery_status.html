@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Delivery Status</title>
+</head>
+<body>
+    <h1>Update Delivery Status for Order #{{ delivery.order.id }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="status">Select Status:</label>
+        <select name="status" id="status">
+            {% for value, label in delivery.DELIVERY_STATUS_CHOICES %}
+                <option value="{{ value }}" {% if value == delivery.status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <button type="submit">Update</button>
+    </form>
+
+    <a href="{% url 'rider_dashboard' %}">Back to Rider Dashboard</a>
+</body>
+</html>

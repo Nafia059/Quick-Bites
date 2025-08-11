@@ -1,0 +1,69 @@
+<!-- foodpanda/templates/order_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Orders - Foodpanda Clone</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h2 class="mb-4">Your Orders</h2>
+
+    {% if orders %}
+        {% for order in orders %}
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Order #{{ order.short_code }}</span>
+
+                        <span class="badge bg-warning text-dark">{{ order.status }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p><strong>Placed on:</strong> {{ order.created_at|date:"d M Y, H:i A" }}</p>
+                    <p><strong>Payment:</strong> {{ order.get_payment_method_display }}</p>
+                    <p><strong>Delivery Address:</strong>
+    {{ order.delivery_address.address_text }},
+
+</p>
+
+
+                    <h6 class="mt-3">Items:</h6>
+                    <ul class="list-group mb-3">
+                        {% for item in order.items.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>
+                                        {% if item.menu_item %}
+                                            {{ item.menu_item.name }}
+                                        {% elif item.grocery_item %}
+                                            {{ item.grocery_item.name }}
+                                        {% else %}
+                                            Unknown Item
+                                        {% endif %}
+                                    </strong><br>
+                                    <small>Quantity: {{ item.quantity }}</small>
+                                </div>
+                                <span>
+                                    Rs. {{ item.price }} x {{ item.quantity }} = Rs. {{ item.price|floatformat:2|floatformat }} 
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <h5 class="text-end">Total: Rs. {{ order.total_amount }}</h5>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info text-center">
+            <strong>No orders found.</strong> Start shopping now!
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
